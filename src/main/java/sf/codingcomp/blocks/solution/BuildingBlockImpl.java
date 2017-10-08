@@ -89,6 +89,7 @@ public class BuildingBlockImpl implements BuildingBlock {
 class BuildingBlockIterator implements Iterator {
 	
 	private BuildingBlock current = null;
+	private BuildingBlock next = null;
 	private int mod = 0;
 	private boolean nextCalled = false;
 	
@@ -110,7 +111,12 @@ class BuildingBlockIterator implements Iterator {
 	@Override
 	public BuildingBlock next() {
 		BuildingBlock previous = current;
+		if (next != null) { 
+			current = next;
+		}
+		else {
 		current = current.findBlockOver();
+		}
 		nextCalled = true;
 		return previous;
 	}
@@ -119,10 +125,11 @@ class BuildingBlockIterator implements Iterator {
 		if (!nextCalled) { 
 			throw new IllegalStateException();
 		}
-		BuildingBlock next = current.findBlockOver();
+		BuildingBlock tmp = current.findBlockOver();
 		current.stackOver(null);
 		current.stackUnder(null);
-		current = next;
+		next = tmp;
+		current = null;
 		mod++;
 		nextCalled = false;
 		
